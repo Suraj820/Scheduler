@@ -128,30 +128,35 @@ class CalendarEventHelper(private val context: Context) {
     private fun parseEventsWithDetails(cursor: Cursor?): List<CalendarEventWithDetails> {
         val eventsWithDetailsList = mutableListOf<CalendarEventWithDetails>()
         cursor?.use {
-            while (it.moveToNext()) {
-                val eventId = it.getLong(it.getColumnIndex(CalendarContract.Events._ID))
-                val title = it.getString(it.getColumnIndex(CalendarContract.Events.TITLE))
-                val startTime = it.getLong(it.getColumnIndex(CalendarContract.Events.DTSTART))
-                val endTime = it.getLong(it.getColumnIndex(CalendarContract.Events.DTEND))
-                val duration = it.getString(it.getColumnIndex(CalendarContract.Events.DURATION))
-                val organizer = it.getString(it.getColumnIndex(CalendarContract.Events.ORGANIZER))
-                val status = it.getInt(it.getColumnIndex(CalendarContract.Events.STATUS))
 
-                // Query reminders and attendees for the current event
-                val remindersCursor = queryRemindersForEvent(eventId)
-                val attendeesCursor = queryAttendeesForEvent(eventId)
+            try {
+                while (it.moveToNext()) {
+                    val eventId = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Events._ID))
+                    val title = it.getString(it.getColumnIndexOrThrow(CalendarContract.Events.TITLE))
+                    val startTime = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Events.DTSTART))
+                    val endTime = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Events.DTEND))
+                    val duration = it.getString(it.getColumnIndexOrThrow(CalendarContract.Events.DURATION))
+                    val organizer = it.getString(it.getColumnIndexOrThrow(CalendarContract.Events.ORGANIZER))
+                    val status = it.getInt(it.getColumnIndexOrThrow(CalendarContract.Events.STATUS))
 
-                val reminders = parseReminders(remindersCursor)
-                val attendees = parseAttendees(attendeesCursor)
-                
-                val formattedStartTime = formattedDate(startTime)
-                val formattedEndTime = formattedDate(endTime)
-                val totalDuration =  endTime - startTime
-                val timeDifferenceMinutes = TimeUnit.MILLISECONDS.toMinutes(totalDuration)
-                Log.e("Suraj==>>", "parseEventsWithDetails: $timeDifferenceMinutes")
+                    // Query reminders and attendees for the current event
+                    val remindersCursor = queryRemindersForEvent(eventId)
+                    val attendeesCursor = queryAttendeesForEvent(eventId)
 
-                val eventWithDetails = CalendarEventWithDetails(eventId, title, formattedStartTime, formattedEndTime, timeDifferenceMinutes.toString(), organizer, status, reminders, attendees,generateColors())
-                eventsWithDetailsList.add(eventWithDetails)
+                    val reminders = parseReminders(remindersCursor)
+                    val attendees = parseAttendees(attendeesCursor)
+
+                    val formattedStartTime = formattedDate(startTime)
+                    val formattedEndTime = formattedDate(endTime)
+                    val totalDuration =  endTime - startTime
+                    val timeDifferenceMinutes = TimeUnit.MILLISECONDS.toMinutes(totalDuration)
+                    Log.e("Suraj==>>", "parseEventsWithDetails: $timeDifferenceMinutes")
+
+                    val eventWithDetails = CalendarEventWithDetails(eventId, title, formattedStartTime, formattedEndTime, timeDifferenceMinutes.toString(), organizer, status, reminders, attendees,generateColors())
+                    eventsWithDetailsList.add(eventWithDetails)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         return eventsWithDetailsList
@@ -195,9 +200,9 @@ class CalendarEventHelper(private val context: Context) {
         val remindersList = mutableListOf<CalendarReminder>()
         cursor?.use {
             while (it.moveToNext()) {
-                val reminderId = it.getLong(it.getColumnIndex(CalendarContract.Reminders._ID))
-                val eventId = it.getLong(it.getColumnIndex(CalendarContract.Reminders.EVENT_ID))
-                val minutes = it.getInt(it.getColumnIndex(CalendarContract.Reminders.MINUTES))
+                val reminderId = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Reminders._ID))
+                val eventId = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Reminders.EVENT_ID))
+                val minutes = it.getInt(it.getColumnIndexOrThrow(CalendarContract.Reminders.MINUTES))
 
                 val reminder = CalendarReminder(reminderId, eventId, minutes)
                 remindersList.add(reminder)
@@ -210,9 +215,9 @@ class CalendarEventHelper(private val context: Context) {
         val attendeesList = mutableListOf<CalendarAttendee>()
         cursor?.use {
             while (it.moveToNext()) {
-                val eventId = it.getLong(it.getColumnIndex(CalendarContract.Attendees.EVENT_ID))
-                val attendeeName = it.getString(it.getColumnIndex(CalendarContract.Attendees.ATTENDEE_NAME))
-                val attendeeEmail = it.getString(it.getColumnIndex(CalendarContract.Attendees.ATTENDEE_EMAIL))
+                val eventId = it.getLong(it.getColumnIndexOrThrow(CalendarContract.Attendees.EVENT_ID))
+                val attendeeName = it.getString(it.getColumnIndexOrThrow(CalendarContract.Attendees.ATTENDEE_NAME))
+                val attendeeEmail = it.getString(it.getColumnIndexOrThrow(CalendarContract.Attendees.ATTENDEE_EMAIL))
 
                 val attendee = CalendarAttendee(eventId, attendeeName, attendeeEmail)
                 attendeesList.add(attendee)
