@@ -35,4 +35,4 @@ jobs:
       - name: Update README with Download Link
         run: |
           echo "APK_FILE: ${{ env.APK_FILE }}"
-          sed -i 's|<APK_DOWNLOAD_LINK>|'"[${{ env.APK_FILE }}]"'|' README.md
+          sed -i "s|<APK_DOWNLOAD_LINK>|[${{ env.APK_FILE }}]|" README.md
