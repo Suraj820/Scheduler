@@ -1,6 +1,5 @@
 package com.example.scheduler
 
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.widget.TextClock
@@ -41,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -51,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import com.example.scheduler.ui.Task
 import com.example.scheduler.ui.theme.PaleGreen
 import com.example.scheduler.ui.theme.PaleGreenDark
 import com.example.scheduler.ui.theme.SchedulerTheme
@@ -62,7 +59,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -345,7 +341,7 @@ fun TaskList(calendarEventHelper: CalendarEventHelper) {
 
 
 
-    val listOfTask = mutableListOf<Task>()
+    /*val listOfTask = mutableListOf<Task>()
     //val clr = generateRandomColors()
     listOfTask.add(
         Task("You Have A Meeting", listOf("P","S"),"3:00 PM","3:30 PM",
@@ -362,7 +358,7 @@ fun TaskList(calendarEventHelper: CalendarEventHelper) {
 
     listOfTask.add(Task("Mobile Team Meeting", listOf("K","S"),"9:00 PM","9:30 PM",generateRandomColors().first,generateRandomColors().second))
     listOfTask.add(Task("Production release", listOf("S","V"),"10:00 AM","10:30 AM",generateRandomColors().first,generateRandomColors().second))
-
+*/
     /*LazyColumn{
         item(listOfTask){
             TaskListItem()
@@ -379,43 +375,44 @@ fun TaskList(calendarEventHelper: CalendarEventHelper) {
 
 }
 
-fun generateRandomColors(): Pair<Color, Color> {
-    val whiteContrastThreshold = 0.5f
-
-    fun isContrastWithWhite(color: Color): Boolean {
-        val luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue).toFloat()
-        return luminance > whiteContrastThreshold
-    }
-
-    do {
-        // Generate a random RGB color
-        val randomColor = Color(
-            red = Random.nextFloat(),
-            green = Random.nextFloat(),
-            blue = Random.nextFloat()
-        )
-
-        // Darker shade
-        val darkerShade = randomColor.copy(alpha = 0.8f)
-        val darkerHex = Integer.toHexString(darkerShade.toArgb()).substring(2)
-        val darkerColor = Color(android.graphics.Color.parseColor("#$darkerHex"))
-
-        // Lighter shade
-        val lighterShade = randomColor.copy(alpha = 0.5f)
-        val lighterHex = Integer.toHexString(lighterShade.toArgb()).substring(2)
-        val lighterColor = Color(android.graphics.Color.parseColor("#$lighterHex"))
-
-        if (isContrastWithWhite(darkerColor) && isContrastWithWhite(lighterColor)) {
-            //return Pair(darkerColor, lighterColor)
-            return Pair(Color("#${lighterHex}".hashCode()), Color("#${darkerHex}".hashCode()))
-        }
-
-    } while (true)
-}
-
-
+//fun generateRandomColors(): Pair<Color, Color> {
+//    val whiteContrastThreshold = 0.5f
+//
+//    fun isContrastWithWhite(color: Color): Boolean {
+//        val luminance = (0.299 * color.red + 0.587 * color.green + 0.114 * color.blue).toFloat()
+//        return luminance > whiteContrastThreshold
+//    }
+//
+//    do {
+//        // Generate a random RGB color
+//        val randomColor = Color(
+//            red = Random.nextFloat(),
+//            green = Random.nextFloat(),
+//            blue = Random.nextFloat()
+//        )
+//
+//        // Darker shade
+//        val darkerShade = randomColor.copy(alpha = 0.8f)
+//        val darkerHex = Integer.toHexString(darkerShade.toArgb()).substring(2)
+//        val darkerColor = Color(android.graphics.Color.parseColor("#$darkerHex"))
+//
+//        // Lighter shade
+//        val lighterShade = randomColor.copy(alpha = 0.5f)
+//        val lighterHex = Integer.toHexString(lighterShade.toArgb()).substring(2)
+//        val lighterColor = Color(android.graphics.Color.parseColor("#$lighterHex"))
+//
+//        if (isContrastWithWhite(darkerColor) && isContrastWithWhite(lighterColor)) {
+//            //return Pair(darkerColor, lighterColor)
+//            return Pair(Color("#${lighterHex}".hashCode()), Color("#${darkerHex}".hashCode()))
+//        }
+//
+//    } while (true)
+//}
 
 
+
+
+/*
 fun generateRandomColor(): String {
     val random = Random.Default
     val red = random.nextInt(256)
@@ -425,8 +422,9 @@ fun generateRandomColor(): String {
     // Creating the color code in hexadecimal format (RRGGBB)
     return String.format("#%02X%02X%02X", red, green, blue)
 }
+*/
 
-fun lightenColor(color: String): String {
+/*fun lightenColor(color: String): String {
     val factor = 0.2 // Adjust this factor to control the lightness
 
     val red = Integer.parseInt(color.substring(1, 3), 16)
@@ -452,9 +450,9 @@ fun darkenColor(color: String): String {
     val newBlue = (blue * (1 - factor)).toInt()
 
     return String.format("#%02X%02X%02X", newRed, newGreen, newBlue)
-}
+}*/
 
-fun generateColors():Pair<Color, Color>{
+/*fun generateColors():Pair<Color, Color>{
 
     val randomColor = generateRandomColor()
     val lightColor = lightenColor(randomColor)
@@ -462,7 +460,7 @@ fun generateColors():Pair<Color, Color>{
 
     return Pair(Color("#${lightColor}".hashCode()), Color("#${darkenColor}".hashCode()))
 
-}
+}*/
 
 
 
@@ -474,7 +472,7 @@ fun generateColors():Pair<Color, Color>{
 
 @Composable
 fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
-    val colors = generateColors()
+   // val colors = generateColors()
     //colors.first = light color
     //colors.second  = dark color
 
@@ -482,7 +480,10 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 5.dp, start = 16.dp, end = 16.dp)
-            .background(color = colors.first, shape = RoundedCornerShape(size = 20.dp)),
+            .background(
+                color = calendarEventWithDetails.colorPair.first,
+                shape = RoundedCornerShape(size = 20.dp)
+            ),
     ){
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -493,47 +494,14 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
                 style = TextStyle(
                     fontSize = 22.sp,
                     fontWeight = FontWeight(800),
-                    color = colors.second,
+                    color = calendarEventWithDetails.colorPair.second,
                 ),
+                maxLines = 2,
                 softWrap = true,
-                modifier = Modifier
-                    .wrapContentHeight(),
+                modifier = Modifier.weight(3f),
             )
             Spacer(Modifier.weight(1f))
-            Text(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .drawBehind {
-                        drawCircle(
-                            color = Color(0x828C1404),
-                            radius = this.size.maxDimension
-                        )
-                    },
-                text = "S",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFE6E6E6),
-                    textAlign = TextAlign.Center,
-                )
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 16.dp, end = 16.dp)
-                    .drawBehind {
-                        drawCircle(
-                            color = Color(0x8204198C),
-                            radius = this.size.maxDimension
-                        )
-                    },
-                text = "P",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFE6E6E6),
-                    textAlign = TextAlign.Center,
-                )
-            )
+            showAttenders(calendarEventWithDetails.attendees)
 
 
         }
@@ -549,7 +517,7 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight(400),
-                        color = colors.second,
+                        color = calendarEventWithDetails.colorPair.second,
                     ),
                     modifier = Modifier
                         .wrapContentHeight(),
@@ -559,7 +527,7 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight(400),
-                        color = colors.second,
+                        color = calendarEventWithDetails.colorPair.second,
                     ),
                     modifier = Modifier
                         .wrapContentHeight(),
@@ -567,14 +535,14 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
             }
             Button(
                 onClick = { /*TODO*/ },
-                colors = ButtonDefaults.buttonColors(containerColor = colors.first)
+                colors = ButtonDefaults.buttonColors(containerColor = calendarEventWithDetails.colorPair.first)
             ) {
                 Text(
                     text = "${calendarEventWithDetails.duration} min",
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(400),
-                        color = colors.second,
+                        color = calendarEventWithDetails.colorPair.second,
                     )
                 )
 
@@ -586,7 +554,7 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight(400),
-                        color = colors.second,
+                        color = calendarEventWithDetails.colorPair.second,
                     ),
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -597,7 +565,7 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight(400),
-                        color = colors.second,
+                        color = calendarEventWithDetails.colorPair.second,
                     ),
                     modifier = Modifier
                         .padding(start = 10.dp)
@@ -612,16 +580,172 @@ fun TaskListItem(calendarEventWithDetails: CalendarEventWithDetails) {
     }
 }
 
+@Composable
+private fun showAttenders(attendees: List<CalendarAttendee>) {
+    if (attendees.size > 2){
+        //val attendeName  = attendees[0].attendeeEmail?.get(0)?.uppercaseChar()
+
+        val attendeeName1 = getDisplayName(attendees[0])
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color(0x828C1404),
+                        radius = this.size.maxDimension
+                    )
+                },
+            text = attendeeName1.toString(),
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight(400),
+                color = Color(0xFFE6E6E6),
+                textAlign = TextAlign.Center,
+            )
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 16.dp, end = 16.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color(0x8204198C),
+                        radius = this.size.maxDimension
+                    )
+                },
+            text = "+${attendees.size-1}",
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight(400),
+                color = Color(0xFFE6E6E6),
+                textAlign = TextAlign.Center,
+            )
+        )
+    }else{
 
 
+        //val attendeName1  = attendees[0].attendeeEmail?.get(0)?.uppercaseChar()
+        //val attendeName2  = attendees[1].attendeeEmail?.get(0)?.uppercaseChar()
+
+        var attendeeName1 =""
+        var attendeeName2 =""
 
 
+        try {
+
+            attendeeName1 = getDisplayName(attendees[0])
+            attendeeName2 = getDisplayName(attendees[1])
+
+        }catch (e:Exception){
+            Log.e("Suraj==>>", "showAttenders: "+e )
+        }
 
 
+        Text(
+            modifier = Modifier
+                .padding(16.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color(0x828C1404),
+                        radius = this.size.maxDimension
+                    )
+                },
+            text = attendeeName1.toString(),
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight(400),
+                color = Color(0xFFE6E6E6),
+                textAlign = TextAlign.Center,
+            )
+        )
+        Text(
+            modifier = Modifier
+                .padding(top = 16.dp, end = 16.dp)
+                .drawBehind {
+                    drawCircle(
+                        color = Color(0x8204198C),
+                        radius = this.size.maxDimension
+                    )
+                },
+            text = attendeeName2.toString(),
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight(400),
+                color = Color(0xFFE6E6E6),
+                textAlign = TextAlign.Center,
+            )
+        )
 
+    }
 
+}
 
+/*@Composable
+private fun showAttenders(attendees: List<CalendarAttendee>) {
+    if (attendees.isNotEmpty()) {
+        val attendeeName1 = getDisplayName(attendees[0])
+        val attendeeName2 = if (attendees.size > 1) getDisplayName(attendees[1]) else null
 
+        if (attendeeName1 != null) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .drawBehind {
+                        drawCircle(
+                            color = Color(0x828C1404),
+                            radius = this.size.maxDimension
+                        )
+                    },
+                text = attendeeName1,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFFE6E6E6),
+                    textAlign = TextAlign.Center,
+                )
+            )
+        }
+
+        if (attendeeName2 != null) {
+            Text(
+                modifier = Modifier
+                    .padding(top = 16.dp, end = 16.dp)
+                    .drawBehind {
+                        drawCircle(
+                            color = Color(0x8204198C),
+                            radius = this.size.maxDimension
+                        )
+                    },
+                text = attendeeName2,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFFE6E6E6),
+                    textAlign = TextAlign.Center,
+                )
+            )
+        }
+    }
+}*/
+
+/*private fun getDisplayName(attendee: CalendarAttendee): String? {
+    Log.e("Suraj==>>", "getDisplayName: " )
+    return if (!attendee.attendeeEmail.isNullOrBlank()) {
+        Log.e("Suraj==>>", "attendeeEmail: "+attendee.attendeeEmail )
+        attendee.attendeeEmail?.get(0)?.uppercaseChar().toString()
+
+    } else {
+
+        attendee.attendeeName?.get(0)?.uppercaseChar().toString()
+    }
+}*/
+
+private fun getDisplayName(attendee: CalendarAttendee): String {
+    return if (!attendee.attendeeEmail.isNullOrBlank()) {
+        attendee.attendeeEmail?.get(0)?.uppercaseChar()?.toString() ?: ""
+    } else {
+        attendee.attendeeName?.takeIf { it.isNotBlank() && it.isNotEmpty() }?.get(0)?.uppercaseChar()?.toString() ?: ""
+    }
+}
 
 
 @Preview(showBackground = true)

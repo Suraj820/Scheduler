@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.CalendarContract
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +15,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class CalendarEventHelper(private val context: Context) {
 
@@ -72,6 +74,56 @@ class CalendarEventHelper(private val context: Context) {
         //return parseEventsWithDetails(eventsCursor)
     }
 
+
+    fun generateColors():Pair<Color, Color>{
+
+        val randomColor = generateRandomColor()
+        val lightColor = lightenColor(randomColor)
+        val darkenColor = darkenColor(randomColor)
+
+        return Pair(Color("#${lightColor}".hashCode()), Color("#${darkenColor}".hashCode()))
+
+    }
+
+    fun generateRandomColor(): String {
+        val random = Random.Default
+        val red = random.nextInt(256)
+        val green = random.nextInt(256)
+        val blue = random.nextInt(256)
+
+        // Creating the color code in hexadecimal format (RRGGBB)
+        return String.format("#%02X%02X%02X", red, green, blue)
+    }
+
+    fun lightenColor(color: String): String {
+        val factor = 0.2 // Adjust this factor to control the lightness
+
+        val red = Integer.parseInt(color.substring(1, 3), 16)
+        val green = Integer.parseInt(color.substring(3, 5), 16)
+        val blue = Integer.parseInt(color.substring(5, 7), 16)
+
+        val newRed = ((255 - red) * factor + red).toInt()
+        val newGreen = ((255 - green) * factor + green).toInt()
+        val newBlue = ((255 - blue) * factor + blue).toInt()
+
+        return String.format("#%02X%02X%02X", newRed, newGreen, newBlue)
+    }
+
+    fun darkenColor(color: String): String {
+        val factor = 0.2 // Adjust this factor to control the darkness
+
+        val red = Integer.parseInt(color.substring(1, 3), 16)
+        val green = Integer.parseInt(color.substring(3, 5), 16)
+        val blue = Integer.parseInt(color.substring(5, 7), 16)
+
+        val newRed = (red * (1 - factor)).toInt()
+        val newGreen = (green * (1 - factor)).toInt()
+        val newBlue = (blue * (1 - factor)).toInt()
+
+        return String.format("#%02X%02X%02X", newRed, newGreen, newBlue)
+    }
+
+
     // Function to parse events with details from the cursor
     private fun parseEventsWithDetails(cursor: Cursor?): List<CalendarEventWithDetails> {
         val eventsWithDetailsList = mutableListOf<CalendarEventWithDetails>()
@@ -98,7 +150,7 @@ class CalendarEventHelper(private val context: Context) {
                 val timeDifferenceMinutes = TimeUnit.MILLISECONDS.toMinutes(totalDuration)
                 Log.e("Suraj==>>", "parseEventsWithDetails: $timeDifferenceMinutes")
 
-                val eventWithDetails = CalendarEventWithDetails(eventId, title, formattedStartTime, formattedEndTime, timeDifferenceMinutes.toString(), organizer, status, reminders, attendees)
+                val eventWithDetails = CalendarEventWithDetails(eventId, title, formattedStartTime, formattedEndTime, timeDifferenceMinutes.toString(), organizer, status, reminders, attendees,generateColors())
                 eventsWithDetailsList.add(eventWithDetails)
             }
         }
@@ -183,7 +235,8 @@ data class CalendarEventWithDetails(
     val organizer: String?,
     val status: Int,
     val reminders: List<CalendarReminder>,
-    val attendees: List<CalendarAttendee>
+    val attendees: List<CalendarAttendee>,
+    val colorPair: Pair<Color,Color>
 )
 
 data class CalendarReminder(
