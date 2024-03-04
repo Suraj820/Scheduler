@@ -1,38 +1,53 @@
-name: AndroidBuild
+name: Android debug build
 
 on:
-  pull_request:
-    branches: [master]
-  push:
-    branches: [master]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'User-facing release version name'
+        required: true
+        default: "1.0.0"
+      versionCode:
+        description: 'versionCode or build number'
+        required: true
+        default: "1"
 
 jobs:
-  build:
+  debug-build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.0
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v3.13.0
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v3.1.3
-        with:
-          name: app-release.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Set up environment variables
-        run: echo "APK_FILE=$(echo ${{ github.workspace }}/app/build/outputs/apk/debug/app-debug.apk)" >> $GITHUB_ENV
-
-      - name: Update README with Download Link
+      - name: Setup versionName regardless of how this action is triggered
+        id: version_name
         run: |
-          echo "APK_FILE: ${{ env.APK_FILE }}"
-          sed -i "s|<APK_DOWNLOAD_LINK>|[${{ env.APK_FILE }}]|" README.md
+          WORKFLOW_INPUT=${{ github.event.inputs.versionName }}
+          VERSION_NAME=${WORKFLOW_INPUT:-"1.0.0"}
+          echo "ORG_GRADLE_PROJECT_VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+
+      - name: Setup versionCode regardless of how this action is triggered
+        id: version_code
+        run: |
+          WORKFLOW_INPUT=${{ github.event.inputs.versionCode }}
+          VERSION_CODE=${WORKFLOW_INPUT:-"1"}
+          echo "ORG_GRADLE_PROJECT_VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+      
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 11
+          cache: 'gradle'
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+      
+      - name: Build debug APK
+        run: ./gradlew --no-daemon assembleDebug
+
+      - name: Upload build file
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-build-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
